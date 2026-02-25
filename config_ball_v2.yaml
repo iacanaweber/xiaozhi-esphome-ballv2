@@ -1,0 +1,322 @@
+substitutions:
+  name: esphome-web-deba28
+  friendly_name: "Spotpear Clock"
+
+  # Pins (Ball V2)
+  backlight_output_pin: "42"
+  lcd_cs_pin: "5"
+  lcd_dc_pin: "47"
+  lcd_reset_pin: "38"
+  spi_clk_pin: "4"
+  spi_mosi_pin: "2"
+
+  # Entities HA
+  temp_atual_entity: "sensor.sensor_cobertura_temperatura"
+  temp_min_entity:   "input_number.cobertura_temp_min_hoje"
+  temp_max_entity:   "input_number.cobertura_temp_max_hoje"
+  weather_entity:    "weather.forecast_casa"
+
+esphome:
+  name: ${name}
+  friendly_name: ${friendly_name}
+  name_add_mac_suffix: false
+  on_boot:
+    then:
+      - script.execute: draw_display
+
+esp32:
+  board: esp32-s3-devkitc-1
+  flash_size: 16MB
+  framework:
+    type: esp-idf
+
+psram:
+  mode: octal
+  speed: 80MHz
+
+logger:
+  hardware_uart: USB_SERIAL_JTAG
+
+wifi:
+  ssid: !secret wifi_ssid
+  password: !secret wifi_password
+  ap:
+    ssid: "Ball v2 Hotspot"
+    password: "RZ7D3EzJdPM6"
+
+captive_portal:
+
+api:
+
+ota:
+  - platform: esphome
+
+# Hora via Home Assistant (24h)
+time:
+  - platform: homeassistant
+    id: ha_time
+    on_time:
+      - seconds: 0
+        minutes: /1
+        then:
+          - script.execute: draw_display
+
+# Sensores do HA
+sensor:
+  - platform: homeassistant
+    id: t_atual
+    entity_id: ${temp_atual_entity}
+    internal: true
+    on_value:
+      then:
+        - script.execute: draw_display
+
+  - platform: homeassistant
+    id: t_min
+    entity_id: ${temp_min_entity}
+    internal: true
+    on_value:
+      then:
+        - script.execute: draw_display
+
+  - platform: homeassistant
+    id: t_max
+    entity_id: ${temp_max_entity}
+    internal: true
+    on_value:
+      then:
+        - script.execute: draw_display
+
+text_sensor:
+  - platform: homeassistant
+    id: wx_cond
+    entity_id: ${weather_entity}
+    internal: true
+    on_value:
+      then:
+        - script.execute: draw_display
+
+# Fontes
+font:
+  - file:
+      type: gfonts
+      family: Figtree
+      weight: 600
+    id: font_time
+    size: 72
+
+  - file:
+      type: gfonts
+      family: Figtree
+      weight: 500
+    id: font_temp
+    size: 20
+
+# Cores (MAX vermelho, MIN azul, ATUAL verde)
+color:
+  - id: col_red
+    red: 85%
+    green: 24%
+    blue: 13%
+
+  - id: col_blue
+    red: 24%
+    green: 27%
+    blue: 66%
+
+  - id: col_green
+    red: 97%
+    green: 52%
+    blue: 25%
+
+# Imagens (as suas do repo)
+image:
+  - file: https://raw.githubusercontent.com/iacanaweber/xiaozhi-esphome-ballv2/main/img/clear-night.png
+    id: bg_clear_night
+    resize: 240x240
+    type: RGB565
+
+  - file: https://raw.githubusercontent.com/iacanaweber/xiaozhi-esphome-ballv2/main/img/cloudy.png
+    id: bg_cloudy
+    resize: 240x240
+    type: RGB565
+
+  - file: https://raw.githubusercontent.com/iacanaweber/xiaozhi-esphome-ballv2/main/img/exceptional.png
+    id: bg_exceptional
+    resize: 240x240
+    type: RGB565
+
+  - file: https://raw.githubusercontent.com/iacanaweber/xiaozhi-esphome-ballv2/main/img/fog.png
+    id: bg_fog
+    resize: 240x240
+    type: RGB565
+
+  - file: https://raw.githubusercontent.com/iacanaweber/xiaozhi-esphome-ballv2/main/img/hail.png
+    id: bg_hail
+    resize: 240x240
+    type: RGB565
+
+  - file: https://raw.githubusercontent.com/iacanaweber/xiaozhi-esphome-ballv2/main/img/lightning-rainy.png
+    id: bg_lightning_rainy
+    resize: 240x240
+    type: RGB565
+
+  - file: https://raw.githubusercontent.com/iacanaweber/xiaozhi-esphome-ballv2/main/img/lightning.png
+    id: bg_lightning
+    resize: 240x240
+    type: RGB565
+
+  - file: https://raw.githubusercontent.com/iacanaweber/xiaozhi-esphome-ballv2/main/img/partlycloudy.png
+    id: bg_partlycloudy
+    resize: 240x240
+    type: RGB565
+
+  # condição do HA é "pouring", seu arquivo é pouring-rain.png
+  - file: https://raw.githubusercontent.com/iacanaweber/xiaozhi-esphome-ballv2/main/img/pouring-rain.png
+    id: bg_pouring
+    resize: 240x240
+    type: RGB565
+
+  - file: https://raw.githubusercontent.com/iacanaweber/xiaozhi-esphome-ballv2/main/img/rainy.png
+    id: bg_rainy
+    resize: 240x240
+    type: RGB565
+
+  - file: https://raw.githubusercontent.com/iacanaweber/xiaozhi-esphome-ballv2/main/img/snowy-rainy.png
+    id: bg_snowy_rainy
+    resize: 240x240
+    type: RGB565
+
+  - file: https://raw.githubusercontent.com/iacanaweber/xiaozhi-esphome-ballv2/main/img/snowy.png
+    id: bg_snowy
+    resize: 240x240
+    type: RGB565
+
+  - file: https://raw.githubusercontent.com/iacanaweber/xiaozhi-esphome-ballv2/main/img/sunny.png
+    id: bg_sunny
+    resize: 240x240
+    type: RGB565
+
+  - file: https://raw.githubusercontent.com/iacanaweber/xiaozhi-esphome-ballv2/main/img/windy-variant.png
+    id: bg_windy_variant
+    resize: 240x240
+    type: RGB565
+
+  - file: https://raw.githubusercontent.com/iacanaweber/xiaozhi-esphome-ballv2/main/img/windy.png
+    id: bg_windy
+    resize: 240x240
+    type: RGB565
+
+spi:
+  - id: spi_bus
+    clk_pin: GPIO${spi_clk_pin}
+    mosi_pin: GPIO${spi_mosi_pin}
+
+output:
+  - platform: ledc
+    pin: GPIO${backlight_output_pin}
+    id: backlight_output
+    inverted: true
+
+light:
+  - platform: monochromatic
+    id: screen
+    name: "Screen"
+    output: backlight_output
+    restore_mode: ALWAYS_ON
+
+display:
+  - platform: ili9xxx
+    id: lcd
+    model: GC9A01A
+    invert_colors: true
+    data_rate: 40MHz
+    cs_pin: GPIO${lcd_cs_pin}
+    dc_pin: GPIO${lcd_dc_pin}
+    reset_pin:
+      number: GPIO${lcd_reset_pin}
+    update_interval: never
+    dimensions:
+      height: 240
+      width: 240
+    lambda: |-
+      // 1) Background por condição do weather.*
+      std::string c = id(wx_cond).state.c_str();
+
+      if      (c == "clear-night")     it.image(120, 120, id(bg_clear_night), ImageAlign::CENTER);
+      else if (c == "cloudy")          it.image(120, 120, id(bg_cloudy), ImageAlign::CENTER);
+      else if (c == "exceptional")     it.image(120, 120, id(bg_exceptional), ImageAlign::CENTER);
+      else if (c == "fog")             it.image(120, 120, id(bg_fog), ImageAlign::CENTER);
+      else if (c == "hail")            it.image(120, 120, id(bg_hail), ImageAlign::CENTER);
+      else if (c == "lightning-rainy") it.image(120, 120, id(bg_lightning_rainy), ImageAlign::CENTER);
+      else if (c == "lightning")       it.image(120, 120, id(bg_lightning), ImageAlign::CENTER);
+      else if (c == "partlycloudy")    it.image(120, 120, id(bg_partlycloudy), ImageAlign::CENTER);
+      else if (c == "pouring")         it.image(120, 120, id(bg_pouring), ImageAlign::CENTER);
+      else if (c == "rainy")           it.image(120, 120, id(bg_rainy), ImageAlign::CENTER);
+      else if (c == "snowy-rainy")     it.image(120, 120, id(bg_snowy_rainy), ImageAlign::CENTER);
+      else if (c == "snowy")           it.image(120, 120, id(bg_snowy), ImageAlign::CENTER);
+      else if (c == "sunny")           it.image(120, 120, id(bg_sunny), ImageAlign::CENTER);
+      else if (c == "windy-variant")   it.image(120, 120, id(bg_windy_variant), ImageAlign::CENTER);
+      else if (c == "windy")           it.image(120, 120, id(bg_windy), ImageAlign::CENTER);
+      else                              it.image(120, 120, id(bg_exceptional), ImageAlign::CENTER);
+
+      // Helpers: contorno branco (1px)
+      const int o = 1;
+
+      auto draw_outline_text = [&](int x, int y, auto font, Color fg, TextAlign align, const std::string &text) {
+        // contorno (8 direções)
+        for (int dx = -o; dx <= o; dx++) {
+          for (int dy = -o; dy <= o; dy++) {
+            if (dx == 0 && dy == 0) continue;
+            it.printf(x + dx, y + dy, font, Color::WHITE, align, "%s", text.c_str());
+          }
+        }
+        // texto final
+        it.printf(x, y, font, fg, align, "%s", text.c_str());
+      };
+
+      auto draw_outline_time = [&](int x, int y, auto font, Color fg, TextAlign align, const char *fmt, auto t) {
+        // contorno (8 direções)
+        for (int dx = -o; dx <= o; dx++) {
+          for (int dy = -o; dy <= o; dy++) {
+            if (dx == 0 && dy == 0) continue;
+            it.strftime(x + dx, y + dy, font, Color::WHITE, align, fmt, t);
+          }
+        }
+        // texto final
+        it.strftime(x, y, font, fg, align, fmt, t);
+      };
+
+      // 2) Hora central (24h) — preto com borda branca
+      auto now = id(ha_time).now();
+      if (now.is_valid()) {
+        draw_outline_time(120, 55, id(font_time), Color::BLACK, TextAlign::TOP_CENTER, "%H:%M", now);
+      } else {
+        draw_outline_text(120, 85, id(font_temp), Color::BLACK, TextAlign::CENTER, "--:--");
+      }
+
+      // 3) MAX / MIN / CUR (°C) com cores + borda branca
+      auto fmt = [](float v) -> std::string {
+        if (isnan(v)) return std::string("--.-");
+        char buf[16];
+        snprintf(buf, sizeof(buf), "%.1f", v);
+        return std::string(buf);
+      };
+
+      std::string smax = fmt(id(t_max).state);
+      std::string sat  = fmt(id(t_atual).state);
+      std::string smin = fmt(id(t_min).state);
+
+      std::string line_max = std::string("MAX  ") + smax + "°C";
+      std::string line_cur = std::string("CUR  ") + sat  + "°C";
+      std::string line_min = std::string("MIN  ") + smin + "°C";
+
+      draw_outline_text(120, 155, id(font_temp), id(col_red),   TextAlign::TOP_CENTER, line_max);
+      draw_outline_text(120, 178, id(font_temp), id(col_green), TextAlign::TOP_CENTER, line_cur);
+      draw_outline_text(120, 201, id(font_temp), id(col_blue),  TextAlign::TOP_CENTER, line_min);
+      
+
+script:
+  - id: draw_display
+    then:
+      - component.update: lcd
