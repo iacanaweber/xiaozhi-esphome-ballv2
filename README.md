@@ -9,6 +9,12 @@ ESPHome configuration for the **Spotpear Ball V2** — a round 240×240 display 
 - Shows MAX / CUR / MIN temperatures from Home Assistant sensors
 - Refreshes every minute, and also on any sensor/weather update
 
+Here is the real device running, showing the time, current, max and min temperatures, with the background matching the current weather condition:
+
+![device](img/picture.png)
+
+The background changes automatically based on the condition reported by Home Assistant. Example with the `sunny` theme:
+
 ![sunny](img/sunny.png)
 
 ## Hardware
