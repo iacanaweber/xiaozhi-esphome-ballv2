@@ -1,4 +1,4 @@
-# xiaozhi-esphome-ballv2
+# Spotpear Ball V2 — ESPHome Clock
 
 ESPHome configuration for the **Spotpear Ball V2** — a round 240×240 display powered by an ESP32-S3, showing time, weather, and temperature data from Home Assistant.
 
@@ -9,13 +9,15 @@ ESPHome configuration for the **Spotpear Ball V2** — a round 240×240 display 
 - Shows MAX / CUR / MIN temperatures from Home Assistant sensors
 - Refreshes every minute, and also on any sensor/weather update
 
+## Preview
+
 Here is the real device running, showing the time, current, max and min temperatures, with the background matching the current weather condition:
 
 ![device](img/picture.png)
 
-The background changes automatically based on the condition reported by Home Assistant. Example with the `sunny` theme:
+The background changes automatically based on the condition reported by Home Assistant. Example with the `partlycloudy` theme:
 
-![sunny](img/sunny.png)
+![partlycloudy](img/partlycloudy.png)
 
 ## Hardware
 
@@ -63,16 +65,13 @@ The background changes automatically based on the condition reported by Home Ass
    esphome run config_ball_v2.yaml
    ```
 4. Add the device to Home Assistant via the ESPHome integration.
+5. Subsequent updates can be flashed over-the-air — no USB connection needed after the first flash.
 
-## Supported weather conditions
-
-The background image changes automatically based on the Home Assistant weather state:
-
-`clear-night` · `cloudy` · `exceptional` · `fog` · `hail` · `lightning` · `lightning-rainy` · `partlycloudy` · `pouring` · `rainy` · `snowy` · `snowy-rainy` · `sunny` · `windy` · `windy-variant`
+> If Wi-Fi is unavailable, the device broadcasts a hotspot named **Ball v2 Hotspot** for configuration via the captive portal.
 
 ## Customization
 
-All key parameters are defined in the `substitutions` block:
+All key parameters are defined in the `substitutions` block at the top of `config_ball_v2.yaml`. Supported weather condition values: `clear-night` · `cloudy` · `exceptional` · `fog` · `hail` · `lightning` · `lightning-rainy` · `partlycloudy` · `pouring` · `rainy` · `snowy` · `snowy-rainy` · `sunny` · `windy` · `windy-variant`
 
 ```yaml
 substitutions:
@@ -89,7 +88,3 @@ substitutions:
   temp_max_entity:   "input_number.cobertura_temp_max_hoje"
   weather_entity:    "weather.forecast_casa"
 ```
-
-## Fallback access point
-
-If Wi-Fi is unavailable the device broadcasts a hotspot named **Ball v2 Hotspot** for configuration via the captive portal.
